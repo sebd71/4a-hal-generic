@@ -34,5 +34,6 @@ void HalMgrLoad(afb_request *request);
 void HalMgrUnload(afb_request *request);
 void HalMgrSubscribeEvent(afb_request *request);
 void HalMgrUnsubscribeEvent(afb_request *request);
+void HalMgrChangeStatusOfHal(afb_request *request);
 
 #endif /* _HALMGR_CB_INCLUDE_ */

@@ -280,3 +280,65 @@ void HalMgrUnsubscribeEvent(afb_request *request)
 
 	afb_request_success(request, json_object_new_boolean(false), NULL);
 }
+
+// TODO JAI: remove this verb
+// Temporary verb used to change status of a HAL
+void HalMgrChangeStatusOfHal(afb_request *request)
+{
+	int specifiedStatus;
+	char *specifiedHalName;
+
+	afb_dynapi *apiHandle;
+	struct HalMgrData *HalMgrGlobalData;
+	struct SpecificHalData *specifiedHalData;
+
+	struct json_object *requestJson;
+
+	AFB_REQUEST_WARNING(request, "JAI :%s Temporary function, will be deleted soon", __func__);
+
+	apiHandle = (afb_dynapi *) afb_request_get_dynapi(request);
+	if(! apiHandle) {
+		afb_request_fail(request, "ERROR", "Can't get HalManager Api handle");
+		return;
+	}
+
+	HalMgrGlobalData = (struct HalMgrData *) afb_dynapi_get_userdata(apiHandle);
+	if(! HalMgrGlobalData) {
+		afb_request_fail(request, "ERROR", "Can't get HalManager data");
+		return;
+	}
+
+	requestJson = afb_request_json(request);
+	if(! requestJson) {
+		afb_request_fail(request, "ERROR", "Can't get request json");
+		return;
+	}
+
+	if(! json_object_is_type(requestJson, json_type_object)) {
+		afb_request_fail(request, "ERROR", "Can't get array of request json");
+		return;
+	}
+
+	// Get request option
+	if(wrap_json_unpack(requestJson, "{s:s s:i}", "api", &specifiedHalName, "status", &specifiedStatus)) {
+		afb_request_fail(request, "ERROR", "Can't get request parameters");
+		return;
+	}
+
+	specifiedHalData = HalUtlSearchHalDataByApiName(HalMgrGlobalData, specifiedHalName);
+	if(! specifiedHalData) {
+		afb_request_fail(request, "ERROR", "Can't found the specified Hal Api");
+		return;
+	}
+
+	if(specifiedStatus == HAL_STATUS_UNAVAILABLE)
+		specifiedHalData->status = HAL_STATUS_UNAVAILABLE;
+	else if(specifiedStatus == HAL_STATUS_AVAILABLE)
+		specifiedHalData->status = HAL_STATUS_AVAILABLE;
+	else {
+		afb_request_fail(request, "ERROR", "Specified status is no valid");
+		return;
+	}
+
+	afb_request_success(request, NULL, "Status changed");
+}

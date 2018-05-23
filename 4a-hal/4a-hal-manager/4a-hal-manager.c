@@ -45,6 +45,7 @@ struct HalUtlApiVerb HalManagerApiStaticVerbs[] =
 	{ .verb = "unload",		.callback = HalMgrUnload,		.info = "Unload an external HAL to HAL Manager"},
 	{ .verb = "subscribe",		.callback = HalMgrSubscribeEvent,	.info = "Subscribe to an event"},
 	{ .verb = "unsuscribe",		.callback = HalMgrUnsubscribeEvent,	.info = "Unsubscribe to an event"},
+	{ .verb = "changestatus",	.callback = HalMgrChangeStatusOfHal,	.info = "Temporary verb used to change status of a HAL"},
 	{ .verb = NULL }		// Marker for end of the array
 };
 
